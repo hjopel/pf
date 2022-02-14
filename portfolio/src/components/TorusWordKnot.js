@@ -1,20 +1,11 @@
-import {
-  extend,
-  useFrame,
-  useThree,
-  useLoader,
-  createPortal,
-} from "@react-three/fiber";
+import { extend, useFrame, createPortal } from "@react-three/fiber";
 import {
   shaderMaterial,
   TorusKnot,
   Text as R3Text,
   PerspectiveCamera,
-  Box,
-  OrbitControls,
-  OrthographicCamera,
 } from "@react-three/drei";
-import { useRef, useEffect, useMemo, forwardRef } from "react";
+import { useRef, useMemo, forwardRef } from "react";
 import glsl from "babel-plugin-glsl/macro";
 
 import * as THREE from "three";
@@ -90,10 +81,7 @@ function SpinningThing() {
   );
 }
 const TorusWordKnot = forwardRef((props, ref) => {
-  const state = useThree();
   const shaderRef = useRef();
-  const groupRef = useRef();
-  const textRef = useRef();
   const cam = useRef();
   const [scene, target] = useMemo(() => {
     const scene = new THREE.Scene();

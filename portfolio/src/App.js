@@ -1,85 +1,46 @@
-import logo from "./logo.svg";
 import "./App.css";
-import { useSpring, useTransition } from "@react-spring/core";
-import { useLocation, Switch, Route } from "wouter";
+import { useSpring } from "@react-spring/core";
+import { useLocation } from "wouter";
 import {
   Container,
-  Jumbo,
   Nav,
-  Box,
-  Line,
-  Cover,
   HeroDiv,
   LandingDiv,
   ContentContainer,
   Heading,
   Paragraph,
   Button,
+  AboutDiv,
 } from "./SComponents";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import {
-  OrbitControls,
   Html,
   ScrollControls,
   useScroll,
   Scroll,
+  Image,
+  Text,
 } from "@react-three/drei";
 import TorusWordKnot from "./components/TorusWordKnot";
-import { a } from "@react-spring/three";
-import { animated } from "@react-spring/web";
-import { Suspense, useState, useEffect, useRef } from "react";
-import gsap from "gsap";
-import * as THREE from "three";
+// import { a } from "@react-spring/three";
+import { useRef, useState, useEffect, Suspense } from "react";
+// import gsap from "gsap";
+// import * as THREE from "three";
 import { AnimatePresence, motion } from "framer-motion";
 
 const CanvasBox = ({ pages }) => {
   const state = useThree();
-  // state.camera.lookAt(new THREE.Vector3(20, 0, 0));
-  const switchView = () => {
-    // const tl = gsap.timeline();
-    // tl.to(".heroDivContainer", {
-    //   duration: 1,
-    //   ease: "circ.out",
-    //   clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)",
-    // });
-    // .to(
-    //   state.camera.position,
-    //   {
-    //     duration: 4,
-    //     ease: "power2.out",
-    //     z: 30,
-    //     x: -4,
-    //   },
-    //   ">"
-    // )
-    // .to(
-    //   state.camera.rotation,
-    //   {
-    //     duration: 4,
-    //     ease: "power2.out",
-    //     y: Math.PI / 10,
-    //   },
-    //   0
-    // )
-    // .to(
-    //   ".late-reveal",
-    //   {
-    //     duration: 3,
-    //     clipPath: "polygon(100% 100%, 0 100%, 0 0, 100% 0)",
-    //   },
-    //   "-=3"
-    // );
-  };
-  let isHidden = false;
+  const { width: w, height: h } = state.viewport;
+  const imageRef = useRef();
   const scroll = useScroll();
-  const htmlRef = useRef();
-  const heroHtmlRef = useRef();
-  const page3Ref = useRef();
+  const landingRef = useRef();
+  const introRef = useRef();
+  const aboutRef = useRef();
+  const projectsRef = useRef();
   const torusRef = useRef();
   let idx = 0;
   const [desc, setDesc] = useState(descItems[0]);
   useEffect(() => {
-    console.log(torusRef);
     const interval = setInterval(() => {
       idx = ++idx % descItems.length;
       setDesc(descItems[idx]);
@@ -88,31 +49,34 @@ const CanvasBox = ({ pages }) => {
   }, []);
   useFrame(() => {
     const page1Scroll = scroll.range(0 / pages, 1 / pages);
-    const page2Scroll = scroll.range(1 / pages, 2 / pages);
-    torusRef.current.position.z = page1Scroll * -30 + page2Scroll * +40;
+    const page2Scroll = scroll.range(1 / pages, 1.5 / pages);
+    const thirdScroll = scroll.range(1.7 / pages, 1.8 / pages);
+    const v1 = scroll.visible(0 / pages, 1 / (pages * 10));
+    const v2 = scroll.visible(1 / (pages * 1.25), 1 / pages);
+    const v3 = scroll.visible(1.5 / pages, 1.7 / pages);
+
+    torusRef.current.position.z = page1Scroll * -30 + page2Scroll * +50;
     torusRef.current.position.x = page1Scroll * 14 + page2Scroll * -10;
     torusRef.current.position.y = page2Scroll * 8;
     torusRef.current.rotation.y = -(
       (Math.PI / 10) * page1Scroll +
       (-Math.PI / 10) * page2Scroll
     );
-
-    const v1 = scroll.visible(0 / pages, 1 / (pages * 10));
-    if (htmlRef && htmlRef.current)
-      htmlRef.current.classList.toggle("show", v1);
+    state.camera.rotation.y = Math.PI * thirdScroll;
+    if (landingRef && landingRef.current)
+      landingRef.current.classList.toggle("show", v1);
 
     // if (r1 >= 0.1 && !isHidden) {
     //   switchView();
     //   isHidden = true;
     // }
-    const v2 = scroll.visible(1 / (pages * 1.25), 1 / pages);
 
-    if (heroHtmlRef && heroHtmlRef.current)
-      heroHtmlRef.current.classList.toggle("show", v2);
+    if (introRef && introRef.current) {
+      introRef.current.classList.toggle("show", v2);
+    }
 
-    const v3 = scroll.visible((2 / pages) * 1.3, 1);
-    if (page3Ref && page3Ref.current) {
-      page3Ref.current.classList.toggle("show", v3);
+    if (aboutRef && aboutRef.current) {
+      aboutRef.current.classList.toggle("show", v3);
     }
   });
 
@@ -122,22 +86,15 @@ const CanvasBox = ({ pages }) => {
       <spotLight position={[-50, 30, 40]} />
       <TorusWordKnot ref={torusRef} />
       {/* <Environment files="photo_studio_01_1k.hdr" /> */}
-      <Scroll
-      // style={{ transform: " translate(-50%, -50px)" }}
-      >
-        <Html ref={htmlRef} className=" heroDivContainer data translate">
+      <Scroll html>
+        <div className=" heroDivContainer data" ref={landingRef}>
           <HeroDiv id="heroDiv">
             <Heading>Jan Hoppel</Heading>
-            <Button primary onClick={() => switchView()}>
-              Scroll to learn more
-            </Button>
+            <Button primary>Scroll to learn more</Button>
           </HeroDiv>
-        </Html>
-        <Html
-          ref={heroHtmlRef}
-          className="heroDivContainer data"
-          position={[-0.125, -0.025, 0]}
-        >
+        </div>
+
+        <div ref={introRef} className="heroDivContainer data ">
           <LandingDiv>
             <Paragraph>Hi, I'm Jan</Paragraph>
             <Heading>I write code</Heading>
@@ -155,16 +112,31 @@ const CanvasBox = ({ pages }) => {
               </AnimatePresence>
             </Paragraph>
           </LandingDiv>
-        </Html>
-        <Html
-          style={{ top: "200vh" }}
-          className="heroDivContainer translate data"
-          ref={page3Ref}
-        >
-          <Heading>OIDA</Heading>
-        </Html>
+        </div>
+        <div className="heroDivContainer  data" ref={aboutRef}>
+          <AboutDiv>
+            <Heading>About me</Heading>
+            <Paragraph>
+              I'm a 19-year old living in Vienna (soon), who enjoys coding
+              full-stack applications as well as experimenting with WebGL (which
+              you are seeing right now) while also spending way to much time in
+              the gym (according to other people at least).
+            </Paragraph>
+          </AboutDiv>
+        </div>
+        <div className="heroDivContainer  data" ref={projectsRef}>
+          <AboutDiv>
+            <Heading>next</Heading>
+          </AboutDiv>
+        </div>
       </Scroll>
-
+      <group>{/* <Text scale={[w / 5, h / 5, 1]}>About me</Text> */}</group>
+      <Image
+        scale={[w / 5, w / 3, 1]}
+        position={[-w / 3, -h * 2, 0]}
+        url="/hoppel.jpg"
+        ref={imageRef}
+      />
       {/* <OrbitControls /> */}
     </>
   );

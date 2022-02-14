@@ -38,17 +38,14 @@ a {
 }
 .heroDivContainer {
   /* background-color: aqua; */
+  border: thick double #32a1ce;
   width: 100vw;
-  height: fit-content;
   height: 100vh;
   display: flex;
   justify-content: center;
-  z-index: -1;
   pointer-events: none;
 }
-.translate {
-  transform: translate(-50%, -50%) !important;
-}
+
 .heroDiv {
   display: flex;
   flex-direction: column;

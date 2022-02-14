@@ -83,6 +83,15 @@ const LandingDiv = styled(HeroDiv)`
   /* height: 100%; */
   align-items: flex-start;
 `;
+const AboutDiv = styled.div`
+  display: flex;
+
+  flex-direction: column;
+  width: 50%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
 const Paragraph = styled.span`
   color: #94a1b2;
   font-size: 1.2rem;
@@ -126,4 +135,5 @@ export {
   Paragraph,
   Heading,
   Button,
+  AboutDiv,
 };
